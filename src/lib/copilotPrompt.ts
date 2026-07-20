@@ -1,6 +1,9 @@
 // Prompt de sistema do "IUBI Copilot". Descreve a superfície das APIs IUBI para
 // que o modelo aberto (Llama/Groq) ajude desenvolvedores a integrá-las.
-import { IUBI_BASE_URL } from './config';
+
+// Gateway real das APIs IUBI (para orientar os devs). Neste demo, as chamadas
+// passam por um proxy de mesma origem (/iubi) para evitar mixed-content/CORS.
+const IUBI_GATEWAY = 'http://100.52.200.210:32200';
 
 export const COPILOT_SYSTEM_PROMPT = `Você é o "IUBI Copilot", um assistente técnico especializado em ajudar
 desenvolvedores a usar as APIs e os componentes de geovisualização da plataforma IUBI
@@ -12,7 +15,7 @@ para copiar. Não invente endpoints que não estejam listados abaixo; se não so
 diga que não há documentação disponível.
 
 ## Gateway
-Base das APIs: ${IUBI_BASE_URL}
+Base das APIs: ${IUBI_GATEWAY}
 Serviços (prefixos): /catalog/v1, /context/api/v1, /map-render/v1, /ogc/v1
 Todos respondem JSON e enviam CORS liberado (Access-Control-Allow-Origin: *).
 

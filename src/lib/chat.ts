@@ -67,6 +67,8 @@ export interface AiHealth {
   ok: boolean;
   model: string;
   aiConfigured: boolean;
+  iubiUpstream?: string;
+  outboundProxy?: boolean;
 }
 
 export async function getAiHealth(): Promise<AiHealth> {

@@ -70,7 +70,9 @@ export function HomePage() {
           <div className="flex items-center gap-2 text-slate-500 text-sm font-medium mb-2">
             <Server size={16} /> Gateway das APIs
           </div>
-          <code className="block font-mono text-xs text-iubi-700 break-all">{IUBI_BASE_URL}</code>
+          <code className="block font-mono text-xs text-iubi-700 break-all">
+            {ai.data?.iubiUpstream ?? IUBI_BASE_URL}
+          </code>
           <div className="mt-3 flex flex-wrap gap-1.5">
             <Badge>/catalog</Badge>
             <Badge>/context</Badge>

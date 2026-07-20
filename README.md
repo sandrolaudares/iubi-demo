@@ -70,8 +70,45 @@ npm run dev
 
 ```bash
 npm run build
-npm start          # serve dist/ + /api em http://localhost:8787
+npm start          # serve dist/ + /api + /iubi em http://localhost:8787
 ```
+
+## Arquitetura de rede (proxy de mesma origem)
+
+O frontend chama `/iubi/*` (mesma origem) e o servidor Express repassa para o gateway
+IUBI (`IUBI_UPSTREAM`). Isso evita **mixed-content** (uma página HTTPS não pode chamar a
+API HTTP `http://100.x` diretamente) e dispensa CORS. As chamadas de IA vão por `/api/*`,
+mantendo `GROQ_API_KEY` no servidor.
+
+## Deploy no Fly.io
+
+O `Dockerfile` builda o frontend e serve tudo (estático + `/api` + `/iubi`) pelo Express.
+
+> Importante: o gateway IUBI (`100.52.200.210`) fica numa **rede privada** (faixa CGNAT/
+> Tailscale) e **não é alcançável da internet**. Para o mapa/estatísticas/contextos
+> funcionarem em produção, o servidor no Fly precisa alcançar essa rede — o container já
+> traz suporte opcional a **Tailscale** (userspace). Sem isso, apenas o IUBI Copilot
+> funciona publicamente.
+
+```bash
+fly launch --no-deploy         # ou use o fly.toml já incluso (app = "iubi-demo")
+fly secrets set GROQ_API_KEY=...            # obrigatório para o Copilot
+fly secrets set TAILSCALE_AUTHKEY=tskey-... # para alcançar o gateway IUBI (100.x)
+fly deploy
+```
+
+Variáveis relevantes em produção:
+
+| Variável             | Descrição                                                         |
+| -------------------- | ---------------------------------------------------------------- |
+| `IUBI_UPSTREAM`      | Gateway IUBI alcançado pelo servidor (padrão `http://100.52.200.210:32200`) |
+| `TAILSCALE_AUTHKEY`  | Auth key do Tailscale; ativa a conexão à rede privada            |
+| `OUTBOUND_HTTP_PROXY`| Proxy HTTP de saída p/ o gateway (setado automaticamente pelo Tailscale) |
+| `GROQ_API_KEY`       | Chave da Groq (Copilot)                                           |
+
+Quando `TAILSCALE_AUTHKEY` está presente, o `docker-entrypoint.sh` sobe o `tailscaled` em
+modo userspace com um proxy HTTP local e o servidor usa esse proxy para falar com o
+gateway IUBI.
 
 ## Modelo de IA — por que Llama via Groq
 

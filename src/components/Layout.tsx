@@ -53,7 +53,7 @@ export function Layout() {
       <footer className="border-t border-slate-200 bg-white text-xs text-slate-400">
         <div className="mx-auto max-w-7xl px-4 py-3 flex flex-wrap items-center justify-between gap-2">
           <span>
-            Demonstrativo das APIs IUBI · gateway{' '}
+            Demonstrativo das APIs IUBI · via{' '}
             <code className="font-mono text-slate-500">{IUBI_BASE_URL}</code>
           </span>
           <span>Assistente por Llama (open-weight) via Groq</span>
